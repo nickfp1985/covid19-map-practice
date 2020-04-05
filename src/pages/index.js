@@ -1,15 +1,15 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 import L from 'leaflet';
-import Axios from 'axios';
+import axios from 'axios';
 
 import Layout from 'components/Layout';
 import Container from 'components/Container';
 import Map from 'components/Map';
 
 const LOCATION = {
-  lat: 38.9072,
-  lng: -77.0369
+  lat: 0,
+  lng: 0
 };
 const CENTER = [LOCATION.lat, LOCATION.lng];
 const DEFAULT_ZOOM = 2;
@@ -29,29 +29,26 @@ const IndexPage = () => {
 
     try {
       response = await Axios.get('https://corona.lmao.ninja/countries');
-
     } catch(e) {
+      // if axios request fails console log
       console.log('E', e);
       return;
     }
 
     const { data } = response;
     const hasData = Array.isArray(data) && data.length > 0;
-
     if ( !hasData ) return;
 
     const geoJson = {
-      /**
-       * define a geoJson document as a FeaturedCollection to better interface with Leafletsl
-       * map through all of the data and get the country & countryInfo to create a map pin
-       * using the lat & long, then add the country details to the properties of geoJson
-       * */
+      // define a geoJson document as a FeaturedCollection to better interface with Leaflet
       type: 'FeatureCollection',
+      // map through data to get the country & countryInfo to create a map pin using lat long
       features: data.map((country = {}) => {
         const { countryInfo = {} } = country;
         const { lat, long: lng } = countryInfo;
+        // add the country details to the properties of geoJson
         return {
-          trype: 'Feature',
+          type: 'Feature',
           properties: {
             ...country,
           },
@@ -62,6 +59,60 @@ const IndexPage = () => {
         }
       })
     }
+
+    const geoJsonLayers = new L.GeoJSON(geoJson, {
+      // allow custom map layer Leaflet creates for our map
+      pointToLayer: (feature = {}, latlng) => {
+        const { properties = {} } = feature;
+        let updatedFormatted;
+        let casesString;
+
+        const {
+          country,
+          updated,
+          cases,
+          deaths,
+          recovered
+        } = properties
+
+        casesString = `${cases}`;
+
+        // format the cases count to show 1k+ instead of 1000 and a formatted date instead of the timestamp
+        if ( cases > 1000 ) {
+          casesString = `${casesString.slice(0, -3)}k+`;
+        }
+        if ( updated ) {
+          updatedFormatted  = new Date(updated).toLocaleString();
+        }
+
+        // HTML string block which is used to define the map marker
+        const html = `
+          <span>
+            <span>
+              <h2>${country}</h2>
+              <ul>
+                <li><strong>Confirmed:</strong> ${cases}</li>
+                <li><strong>Deaths:</strong> ${deaths}</li>
+                <li><strong>Recovered:</strong> ${recovered}</li>
+                <li><strong>Last Update:</strong> ${updatedFormatted}</li>
+              </ul>
+            </span>
+            ${ casesString }
+          </span>
+        `;
+
+        return L.marker( latlng, {
+          icon: L.divIcon({
+            className: 'icon',
+            html
+          }),
+          // hover on a map marker and it will rise above the other markers
+          riseOnHover: true
+        });
+      }
+    });
+
+    geoJsonLayers.addTo(map);
   }
 
   const mapSettings = {
