@@ -31,8 +31,8 @@
   }
 }
 
-/* CUSTOM MAP MARKER & TOOLTIP */
 .icon-marker {
+
   display: flex;
   position: relative;
   justify-content: center;
@@ -47,13 +47,17 @@
   box-shadow: 0 2px 5px rgba(black, .9);
 
   &:hover {
+
     .icon-marker-tooltip {
       display: block;
     }
+
   }
+
 }
 
 .icon-marker-tooltip {
+
   display: none;
   position: absolute;
   bottom: 100%;
@@ -77,25 +81,30 @@
     transform: rotate(45deg);
     margin-left: -.7em;
   }
+
   h2 {
     font-size: 1.5em;
     line-height: 1.2;
     margin-bottom: .1em;
     margin-top: 0;
   }
+
   h3 {
     font-size: 1.2em;
     margin: .1em 0;
     font-weight: normal;
     color: $blue-grey-100;
   }
+
   ul,
   p {
     font-weight: normal;
   }
+
   ul {
     list-style: none;
     padding: 0;
     margin: .6em 0 0;
   }
+
 }

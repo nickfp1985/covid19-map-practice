@@ -1,7 +1,7 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 import L from 'leaflet';
-import axios from 'axios';
+import Axios from 'axios';
 
 import Layout from 'components/Layout';
 import Container from 'components/Container';
@@ -79,7 +79,7 @@ const IndexPage = () => {
 
         // format the cases count to show 1k+ instead of 1000 and a formatted date instead of the timestamp
         if ( cases > 1000 ) {
-          casesString = `${casesString.slice(0, -3)}k+`;
+          casesString = `${casesString.slice(0, -3)}k+`
         }
         if ( updated ) {
           updatedFormatted  = new Date(updated).toLocaleString();
@@ -87,8 +87,8 @@ const IndexPage = () => {
 
         // HTML string block which is used to define the map marker
         const html = `
-          <span>
-            <span>
+          <span class=“icon-marker”>
+            <span class=“icon-marker-tooltip”>
               <h2>${country}</h2>
               <ul>
                 <li><strong>Confirmed:</strong> ${cases}</li>
