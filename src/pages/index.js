@@ -41,6 +41,11 @@ const IndexPage = () => {
     if ( !hasData ) return;
 
     const geoJson = {
+      /**
+       * define a geoJson document as a FeaturedCollection to better interface with Leafletsl
+       * map through all of the data and get the country & countryInfo to create a map pin
+       * using the lat & long, then add the country details to the properties of geoJson
+       * */
       type: 'FeatureCollection',
       features: data.map((country = {}) => {
         const { countryInfo = {} } = country;
